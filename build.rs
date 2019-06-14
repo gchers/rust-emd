@@ -39,6 +39,10 @@ fn main() {
               .file(source_file)
               .compile("libemd.a");
 
+    // Clean up
+    fs::remove_dir_all(source_dir).expect("Clean up failed: source directory");
+    fs::remove_file(zip_file).expect("Clean up failed: zip file");
+
     // Link library
     let project_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     println!("cargo:rustc-link-search={}/src/", project_dir);
