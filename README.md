@@ -1,4 +1,5 @@
 # EMD
+[![Build Status](https://travis-ci.org/gchers/rust-emd.svg?branch=master)](https://travis-ci.org/gchers/rust-emd)
 
 A simple Rust library for computing the Earth Mover's Distance.
 
