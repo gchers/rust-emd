@@ -11,10 +11,12 @@
 //! It allows computing the distance between two vectors (e.g., histograms):
 //!
 //! ```
+//! extern crate emd;
 //! #[macro_use(array)]
 //! extern crate ndarray;
 //!
 //! # fn main() {
+//! use emd::*;
 //! use ndarray::*;
 //!
 //! let x = array![0., 1.];
@@ -28,10 +30,12 @@
 //! this case the two matrices must have the same number of columns.
 //!
 //! ```
+//! extern crate emd;
 //! #[macro_use(array)]
 //! extern crate ndarray;
 //!
 //! # fn main() {
+//! use emd::*;
 //! use ndarray::*;
 //!
 //! let x = array![[4., 3.], [3., 6.], [2., 3.]];
