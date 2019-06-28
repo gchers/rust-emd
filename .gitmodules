@@ -1,0 +1,3 @@
+[submodule "pyemd"]
+	path = pyemd
+	url = https://github.com/garydoranjr/pyemd
