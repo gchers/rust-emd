@@ -21,6 +21,10 @@ fn main() {
               .file(SRC_PATCHED)
               .compile("libemd.a");
 
+    // Clean up
+    fs::remove_file(SRC_PATCHED)
+       .expect("Failed to remove patched file");
+
     // Link library
     let project_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     println!("cargo:rustc-link-search={}/src/", project_dir);
