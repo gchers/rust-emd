@@ -1,6 +1,6 @@
 [package]
 name = "emd"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Giovanni Cherubin <g.chers@gmail.com>", "Emily Hentgen <emily.hentgen@epfl.ch>"]
 description = "A library for computing the Earth Mover's Distance"
 repository = "https://github.com/gchers/rust-emd"
