@@ -29,7 +29,7 @@ let y = array![5., 3.];
 assert_eq!(distance(&x.view(), &y.view()), 3.5);
 ```
 
-Check out the [docs](https://docs.rs/crate/emd) for more.
+Check out the [docs](https://docs.rs/emd) for more.
 
 ## Maintainers
 [gchers](https://github.com/gchers), [ehentgen](https://github.com/ehentgen)
