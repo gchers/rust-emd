@@ -58,26 +58,29 @@ use ndarray::*;
 use std::os::raw::c_double;
 use std::ptr::null;
 
-
 #[link(name = "emd")]
 extern "C" {
-    fn emd(n_x: usize, weight_x: *const c_double,
-           n_y: usize, weight_y: *const c_double,
-           cost: *const *const c_double,
-           flows: *const *const c_double) -> c_double;
+    fn emd(
+        n_x: usize,
+        weight_x: *const c_double,
+        n_y: usize,
+        weight_y: *const c_double,
+        cost: *const *const c_double,
+        flows: *const *const c_double,
+    ) -> c_double;
 }
 
 /// Returns the Euclidean distance between two vectors of f64 values.
 pub fn euclidean_distance(v1: &ArrayView1<f64>, v2: &ArrayView1<f64>) -> f64 {
     v1.iter()
-      .zip(v2.iter())
-      .map(|(x,y)| (x - y).powi(2))
-      .sum::<f64>()
-      .sqrt()
+        .zip(v2.iter())
+        .map(|(x, y)| (x - y).powi(2))
+        .sum::<f64>()
+        .sqrt()
 }
 
 /// Computes the EMD between two vectors.
-/// 
+///
 /// Uses the Euclidean distance between points as a cost function.
 ///
 /// # Arguments
@@ -85,8 +88,10 @@ pub fn euclidean_distance(v1: &ArrayView1<f64>, v2: &ArrayView1<f64>) -> f64 {
 /// * `x` - First vector
 /// * `y` - Second vector
 pub fn distance(x: &ArrayView1<f64>, y: &ArrayView1<f64>) -> f64 {
-    distance_multi(&x.into_shape((x.len(), 1)).unwrap(),
-                   &y.into_shape((y.len(), 1)).unwrap())
+    distance_multi(
+        &x.into_shape((x.len(), 1)).unwrap(),
+        &y.into_shape((y.len(), 1)).unwrap(),
+    )
 }
 
 /// Computes the EMD between two matrices.
@@ -116,14 +121,15 @@ pub fn distance_multi(X: &ArrayView2<f64>, Y: &ArrayView2<f64>) -> f64 {
 /// * `Y` - Second matrix
 /// * `distance` - Distance metric
 #[allow(non_snake_case)]
-pub fn distance_generic<D>(X: &ArrayView2<f64>, Y: &ArrayView2<f64>,
-                           distance: D) -> f64
-        where D: Fn(&ArrayView1<f64>, &ArrayView1<f64>) -> f64 {
+pub fn distance_generic<D>(X: &ArrayView2<f64>, Y: &ArrayView2<f64>, distance: D) -> f64
+where
+    D: Fn(&ArrayView1<f64>, &ArrayView1<f64>) -> f64,
+{
     assert_eq!(X.cols(), Y.cols());
 
     // Uniform weights
-    let weight_x = vec![1./(X.rows() as c_double); X.rows()];
-    let weight_y = vec![1./(Y.rows() as c_double); Y.rows()];
+    let weight_x = vec![1. / (X.rows() as c_double); X.rows()];
+    let weight_y = vec![1. / (Y.rows() as c_double); Y.rows()];
 
     // Pairwise distance matrix
     let mut cost = Vec::with_capacity(X.rows());
@@ -136,12 +142,26 @@ pub fn distance_generic<D>(X: &ArrayView2<f64>, Y: &ArrayView2<f64>,
     }
 
     // Call emd()
-    let d = unsafe { emd(X.rows(), weight_x.as_ptr(),
-                         Y.rows(), weight_y.as_ptr(),
-                         cost.as_ptr(), null()) };
+    let d = unsafe {
+        emd(
+            X.rows(),
+            weight_x.as_ptr(),
+            Y.rows(),
+            weight_y.as_ptr(),
+            cost.as_ptr(),
+            null(),
+        )
+    };
+
+    for ptr in cost.iter() {
+        unsafe {
+            let reconstructed_slice =
+                std::slice::from_raw_parts_mut(*ptr as *mut f64, Y.rows()) as *mut [f64];
+            drop(Box::from_raw(reconstructed_slice));
+        }
+    }
     d as f64
 }
-
 
 #[cfg(test)]
 mod tests {
